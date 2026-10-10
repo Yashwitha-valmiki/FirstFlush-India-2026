@@ -1,0 +1,12 @@
+entity User;
+entity Location;
+
+action CreateObservation appliesTo {
+    principal: User,
+    resource: Location
+};
+
+action CreateAction appliesTo {
+    principal: User,
+    resource: Location
+};

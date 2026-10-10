@@ -170,3 +170,23 @@ FirstFlush India is a decision-support tool. It should be used together with loc
 ## License
 
 MIT
+
+## AWS Build It path
+
+FirstFlush India uses AWS Cedar locally to define and validate authorization rules for its environmental field workflows.
+
+The Cedar policy covers the two field workflows exposed by the application:
+
+- creating a field observation;
+- creating a preventive action.
+
+Validation command:
+
+```bash
+cedar validate \
+  --policies policies/field_actions.cedar \
+  --schema policies/schema.cedarschema \
+  --schema-format cedar
+```
+
+This project follows the AWS Build It path using AWS Cedar. It does not claim to be deployed to AWS cloud infrastructure and does not require an AWS account.
