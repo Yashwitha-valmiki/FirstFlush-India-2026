@@ -1,0 +1,263 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta
+    name="description"
+    content="FirstFlush India pre-rain runoff-risk prioritization platform"
+  >
+  <title>FirstFlush India</title>
+
+  <link rel="stylesheet" href="/styles.css">
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+  >
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-mark">FF</span>
+      <div>
+        <strong>FirstFlush India</strong>
+        <small>Pre-rain environmental action</small>
+      </div>
+    </div>
+
+    <span id="connection" class="status">● Connecting</span>
+  </header>
+
+  <main class="shell">
+    <section class="hero">
+      <div>
+        <p class="eyebrow">RUNOFF RISK COMMAND CENTER</p>
+        <h1>Act before polluted runoff reaches the water.</h1>
+        <p class="hero-copy">
+          FirstFlush India turns rainfall conditions and local drainage
+          observations into a prioritized pre-rain action list.
+        </p>
+      </div>
+
+      <aside class="truth-card">
+        <strong>Honest by design</strong>
+        <span>
+          Estimated relative first-flush runoff risk —
+          not laboratory-measured pollution.
+        </span>
+      </aside>
+    </section>
+
+    <section class="card controls" aria-label="Risk controls">
+      <label>
+        State
+        <select id="state">
+          <option value="">All states</option>
+          <option value="Karnataka">Karnataka</option>
+          <option value="Telangana">Telangana</option>
+          <option value="Maharashtra">Maharashtra</option>
+          <option value="Delhi">Delhi</option>
+        </select>
+      </label>
+
+      <label>
+        City
+        <select id="city">
+          <option value="">All cities</option>
+          <option value="Bengaluru">Bengaluru</option>
+          <option value="Hyderabad">Hyderabad</option>
+          <option value="Mumbai">Mumbai</option>
+          <option value="New Delhi">New Delhi</option>
+        </select>
+      </label>
+
+      <label>
+        Dry days
+        <input id="dryDays" type="number" min="0" max="60" value="7">
+      </label>
+
+      <label>
+        Forecast rainfall
+        <input id="rainfall" type="number" min="0" max="100" value="12">
+      </label>
+
+      <button id="refresh" type="button">Refresh risk</button>
+    </section>
+
+    <section id="metrics" class="metrics" aria-live="polite"></section>
+
+    <section class="workspace">
+      <div class="card">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">GEOGRAPHIC PRIORITY</p>
+            <h2>Risk map</h2>
+          </div>
+
+          <span id="weatherStatus" class="badge">Weather pending</span>
+        </div>
+
+        <div
+          id="map"
+          role="img"
+          aria-label="Map of monitored drainage locations"
+        ></div>
+
+        <p class="muted">
+          Locations may be reference, estimated, community-submitted,
+          or field-verified.
+        </p>
+      </div>
+
+      <div class="card">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">ACTION QUEUE</p>
+            <h2>Inspect first</h2>
+          </div>
+
+          <a class="button secondary" href="/api/report.csv">
+            CSV report
+          </a>
+        </div>
+
+        <div id="queue" aria-live="polite"></div>
+      </div>
+    </section>
+
+    <section class="lower-grid">
+      <form class="card" id="observationForm">
+        <p class="eyebrow">FIELD FEEDBACK</p>
+        <h2>Record observation</h2>
+
+        <label>
+          Location
+          <select id="observationLocation" required></select>
+        </label>
+
+        <label>
+          Observation
+          <select id="observationType">
+            <option value="Blocked drain">Blocked drain</option>
+            <option value="Litter accumulation">
+              Litter accumulation
+            </option>
+            <option value="Construction sediment">
+              Construction sediment
+            </option>
+            <option value="Oil or sheen observed">
+              Oil or sheen observed
+            </option>
+            <option value="Clean or clear">Clean or clear</option>
+          </select>
+        </label>
+
+        <label>
+          Severity
+          <select id="severity">
+            <option value="Low">Low</option>
+            <option value="Moderate" selected>Moderate</option>
+            <option value="High">High</option>
+          </select>
+        </label>
+
+        <label>
+          Notes
+          <textarea
+            id="notes"
+            maxlength="1000"
+            placeholder="Describe what was observed"
+          ></textarea>
+        </label>
+
+        <button type="submit">Submit observation</button>
+        <p
+          id="observationMessage"
+          class="form-message"
+          aria-live="polite"
+        ></p>
+      </form>
+
+      <form class="card" id="actionForm">
+        <p class="eyebrow">PREVENTIVE RESPONSE</p>
+        <h2>Create action</h2>
+
+        <label>
+          Location
+          <select id="actionLocation" required></select>
+        </label>
+
+        <label>
+          Action
+          <select id="actionType">
+            <option value="Inspect">Inspect</option>
+            <option value="Clean visible debris">
+              Clean visible debris
+            </option>
+            <option value="Prepare temporary screen">
+              Prepare temporary screen
+            </option>
+            <option value="Collect water sample">
+              Collect water sample
+            </option>
+            <option value="Monitor">Monitor</option>
+          </select>
+        </label>
+
+        <label>
+          Notes
+          <textarea
+            id="actionNotes"
+            maxlength="1000"
+            placeholder="Add field-team instructions"
+          ></textarea>
+        </label>
+
+        <button type="submit">Create action</button>
+        <p
+          id="actionMessage"
+          class="form-message"
+          aria-live="polite"
+        ></p>
+      </form>
+
+      <form class="card" id="chatForm">
+        <p class="eyebrow">GROUNDED ASSISTANT</p>
+        <h2>FirstFlush Copilot</h2>
+
+        <label>
+          Your question
+          <textarea
+            id="question"
+            required
+            placeholder="Why is the highest-risk location urgent?"
+          ></textarea>
+        </label>
+
+        <button type="submit">Ask Copilot</button>
+
+        <div id="answer" class="answer" aria-live="polite">
+          Responses are generated from current application data.
+        </div>
+      </form>
+    </section>
+
+    <section class="card methodology">
+      <p class="eyebrow">METHODOLOGY</p>
+      <h2>How the estimate works</h2>
+      <p>
+        The model combines dry-period duration, rainfall, rainfall intensity,
+        paved-surface exposure, traffic, construction, waste, blockage, and
+        water-body proximity. The result is a relative prioritization
+        estimate. It does not measure pollutant concentration or replace
+        professional field judgment.
+      </p>
+    </section>
+  </main>
+
+  <script
+    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+  ></script>
+  <script src="/app.js"></script>
+</body>
+</html>

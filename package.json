@@ -1,0 +1,17 @@
+{
+  "name": "firstflush-india-2026",
+  "version": "1.0.0",
+  "private": true,
+  "description": "FirstFlush India: pre-rain runoff-risk prioritization and field-action platform.",
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js",
+    "test": "node --test",
+    "lint": "node scripts/validate.mjs",
+    "build": "node scripts/build.mjs"
+  }
+}
